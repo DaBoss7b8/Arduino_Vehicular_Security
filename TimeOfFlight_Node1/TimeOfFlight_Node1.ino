@@ -66,6 +66,9 @@ void loop() {
     Serial.println(rc);
     for (;;) {}
   }
+  else{
+    Serial.println("Success");
+  }
 
 
 }
