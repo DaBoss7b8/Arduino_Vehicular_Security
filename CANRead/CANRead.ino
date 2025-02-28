@@ -27,6 +27,9 @@ void setup()
     Serial.println("CAN.begin(...) failed.");
     for (;;) {}
   }
+
+  Serial.println("Success");
+  
 }
 
 void loop()
