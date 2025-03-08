@@ -50,7 +50,7 @@ void loop() {
 
   uint8_t const transmission[] = {0xCA,0xFE,0,0,0,0,0,0};     // Initialize the message that will be sent from CAN, this was taken from the Arduino example program
 
-  memcpy((void*)(transmission + 4), &reading, sizeof(reading)); // Lot happening in this line of code. Memcpy basically is a copy function, which copies data from one place to another
+  //memcpy((void*)(transmission + 4), &reading, sizeof(reading)); // Lot happening in this line of code. Memcpy basically is a copy function, which copies data from one place to another
   // the (void*)(transmission + 4) points to the address of transmission after the first 4 bytes. It then takes the address of "reading", the size of it, and copies it in
 
   CanMsg const msg(CanStandardId(CAN_ID), sizeof(transmission), transmission);  // The line creates an object called msg, which is kept constant so that the contents of the message aren't change midway through transmission
