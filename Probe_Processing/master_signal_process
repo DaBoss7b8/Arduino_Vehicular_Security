@@ -1,65 +1,54 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from rtlsdr import RtlSdr
 from scipy.signal import find_peaks
+import scipy.io
 
-# Configure the SDR
-sdr = RtlSdr()
-sdr.sample_rate = 2e6  # 2.048 MS/s
-sdr.center_freq = 125e6  # 125 MHz upconverter + 500 kHz
-sdr.gain = 'auto'
-
-# Read samples
+samples = np.load("probe_readings.npy")
+sample_rate = 2e6
 num_samples = 1024 * 1024
-samples = sdr.read_samples(num_samples)
 
-# Close the SDR
-sdr.close()
 
-# # Find peaks in the real part of the samples
-# peaks, _ = find_peaks(np.real(samples), height=threshold)
-
-# Plot the SDR samples and highlight the peaks
-t = np.arange(num_samples) / sdr.sample_rate
+# Plot the collected samples, no extra gimicks
+t = np.arange(num_samples) / sample_rate
 plt.figure(figsize=(12, 6))
-plt.plot(t, np.abs(samples), label='Real')
+plt.plot(t, np.abs(samples), label='Absolute Value')
 plt.xlabel('Time (s)')
 plt.ylabel('Amplitude')
-plt.title('SDR Samples at 500 kHz with 125 MHz Upconverter (Noise Removed)')
+plt.title('SDR Samples at 500 kHz with 125 MHz Upconverter')
 plt.legend()
 plt.show()
 
-f = 1/t
-plt.plot(np.abs(np.fft.fft(samples)), label='Real')
-plt.xlabel('GETTING FREQQY WITH IT')
+# Plotting the Absolute Value of the FFT of the samples
+plt.plot(np.abs(np.fft.fft(samples)), label='Absolute Value')
+plt.xlabel('Frequency')
 plt.ylabel('Amplitude')
-plt.title('SDR Samples at 500 kHz with 125 MHz Upconverter (Noise Removed)')
+plt.title('Frequency Spectrum of SDR Samples')
 plt.legend()
 plt.show()
 
-fftland = np.fft.fft(samples)
-#print(fftland)
-#filteredfft = np.zeros(fftland.shape)
-#filteredfft[64:-64] = fftland[64:-64]
-filteredfft = fftland
+# The previous plot had a HUGE spike at DC, which kind of makes readings quite redundant
+# This can be fixed by basically making the readings at DC be zero, which is an easy way of applying a filter LOL
+
+filteredfft = np.fft.fft(samples)
 filter_length = 1024*8
 filter = [0]*filter_length
 filteredfft[:filter_length] = filter
 filteredfft[-filter_length:] = filter
-#print(filteredfft)
+
 plt.plot(np.abs(filteredfft))
-plt.xlabel('GETTING FREQQY WITH IT')
+plt.xlabel('Frequency')
 plt.ylabel('Amplitude')
-plt.title('SDR Samples at 500 kHz with 125 MHz Upconverter (Noise Removed)')
+plt.title('Frequency Spectrum of SDR Samples - DC Spike Filtered')
 plt.legend()
 plt.show()
 
-data = np.fft.ifft(filteredfft)
+# Since the DC Spike has been removed, the inverse FFT of the filtered dataset can be taken, and that presents us with clean values
+
+data = np.fft.ifft(filteredfft)     # NOTE: The "data" variable is the raw samples, with the DC spike samples removed
 plt.plot(t, np.abs(data), label='Real')
-# plt.plot(t[peaks], np.real(samples)[peaks], 'x', label='Peaks')
 plt.xlabel('Time (s)')
 plt.ylabel('Amplitude')
-plt.title('SDR Samples at 500 kHz with 125 MHz Upconverter (Noise Removed)')
+plt.title('SDR Samples - DC Spike Removed')
 plt.legend()
 plt.show()
 
@@ -114,14 +103,8 @@ ketchup = np.convolve(mayo.T, cheese.T, mode = "same")
 plt.plot(t, ketchup, label='Magnitude')
 plt.xlabel('Time (s)')
 plt.ylabel('Amplitude')
-plt.title('supreme betterness')
+plt.title('supreme betterness - integral')
 plt.legend()
 plt.show()
 
-mustard = np.diff(mayo)
-plt.plot(t[1:], mustard, label='Mayo')
-plt.xlabel('Time (s)')
-plt.ylabel('Amplitude')
-plt.title('supreme betterness 2')
-plt.legend()
-plt.show()
+

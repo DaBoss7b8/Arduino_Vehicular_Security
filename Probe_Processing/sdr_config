@@ -1,9 +1,6 @@
-# This code actually runs the SDR code, and then saves the sample to a npy file
+# Code used for configuring the SDR and collecting a sample of data
 
-import numpy as np
-import matplotlib.pyplot as plt
 from rtlsdr import RtlSdr
-from scipy.signal import find_peaks
 
 # Configure the SDR
 sdr = RtlSdr()
@@ -17,6 +14,3 @@ samples = sdr.read_samples(num_samples)
 
 # Close the SDR
 sdr.close()
-
-
-np.save("probe_readings.npy", samples)

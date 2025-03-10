@@ -1,27 +1,17 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
-from rtlsdr import RtlSdr
+import scipy.io
 
-# Configure the SDR
-sdr = RtlSdr()
-sdr.sample_rate = 2e6  # 2.048 MS/s
-sdr.center_freq = 125e6  # 125 MHz upconverter + 500 kHz
-sdr.gain = 'auto'
-
-# Read samples
-num_samples = 1024 * 1024
-samples = sdr.read_samples(num_samples)
-
-# Close the SDR
-sdr.close()
+samples = np.load("probe_readings.npy")
+sample_rate = 2e6
 
 # Extract I and Q components from the complex samples
 I = np.real(samples)  # In-phase component (real part)
 Q = np.imag(samples)  # Quadrature component (imaginary part)
 
 # Create a time vector (or sample indices)
-time = np.arange(len(samples))/sdr.sample_rate
+time = np.arange(len(samples))/sample_rate
 
 # Create a 3D plot
 fig = plt.figure(figsize=(10, 6))
@@ -36,4 +26,5 @@ ax.set_ylabel('Quadrature (Q)')
 ax.set_zlabel('Time (samples)')
 ax.set_title('3D IQ Plot')
 
+# Warning: THIS PLOT WILL TAKE A WHILE ITS A BUNCH OF POINTS
 plt.show()

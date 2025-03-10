@@ -1,6 +1,6 @@
 import scipy.io
 import matplotlib.pyplot as plt
-mat = scipy.io.loadmat('file.mat')
+mat = scipy.io.loadmat('osc_data.mat')
 #print(mat)
 
 time = mat["time"]
