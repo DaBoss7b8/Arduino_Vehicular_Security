@@ -52,9 +52,10 @@ plt.title('SDR Samples - DC Spike Removed')
 plt.legend()
 plt.show()
 
+
+
 absdata = np.abs(data)
 cheese = np.array([1,1,1,1])
-print(cheese.shape, data.shape)
 result = np.convolve(absdata.T, cheese.T, mode = "same")
 plt.plot(t, result, label='Real')
 # plt.plot(t[peaks], np.real(samples)[peaks], 'x', label='Peaks')
