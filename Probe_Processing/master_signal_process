@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.signal import find_peaks
 import scipy.io
+from scipy.signal import find_peaks
 
 samples = np.load("probe_readings.npy")
 sample_rate = 2e6
@@ -44,7 +45,7 @@ plt.show()
 
 # Since the DC Spike has been removed, the inverse FFT of the filtered dataset can be taken, and that presents us with clean values
 
-data = np.fft.ifft(filteredfft)     # NOTE: The "data" variable is the raw samples, with the DC spike samples removed
+data = np.fft.ifft(filteredfft)                                 # NOTE: The "data" variable is the raw samples, with the DC spike samples removed
 plt.plot(t, np.abs(data), label='Real')
 plt.xlabel('Time (s)')
 plt.ylabel('Amplitude')
@@ -55,57 +56,40 @@ plt.show()
 
 
 absdata = np.abs(data)
-cheese = np.array([1,1,1,1])
-result = np.convolve(absdata.T, cheese.T, mode = "same")
+smoothening = np.array([1,1,1,1])
+result = np.convolve(absdata.T, smoothening.T, mode = "same")
 plt.plot(t, result, label='Real')
-# plt.plot(t[peaks], np.real(samples)[peaks], 'x', label='Peaks')
 plt.xlabel('Time (s)')
 plt.ylabel('Amplitude')
-plt.title('supreme betterness')
-plt.legend()
-plt.show()
-
-# Extract I and Q components from the complex samples
-I = np.real(data)  # In-phase component (real part)
-Q = np.imag(data)  # Quadrature component (imaginary part)
-
-# # Create a time vector (or sample indices)
-# time = np.arange(len(data))/sdr.sample_rate
-
-# # Create a 3D plot
-# fig = plt.figure(figsize=(10, 6))
-# ax = fig.add_subplot(111, projection='3d')
-
-# # Plot I, Q, and time (or sample index) in 3D
-# ax.scatter(I, Q, time, s=1, color='blue', alpha=0.5)
-
-# # Labels and title
-# ax.set_xlabel('In-Phase (I)')
-# ax.set_ylabel('Quadrature (Q)')
-# ax.set_zlabel('Time (samples)')
-# ax.set_title('3D IQ Plot')
-
-# plt.show()
-
-
-signs = np.sign(I)
-mayo = signs * np.abs(data)
-plt.figure(figsize=(12, 6))
-plt.plot(t, mayo, label='Condiments')
-plt.xlabel('Time (s)')
-plt.ylabel('Amplitude')
-plt.title('Multiplying IQ Samples with Negative')
+plt.title('Filtered Data with a 4-Point Moving Average')
 plt.legend()
 plt.show()
 
 
 
-ketchup = np.convolve(mayo.T, cheese.T, mode = "same")
-plt.plot(t, ketchup, label='Magnitude')
-plt.xlabel('Time (s)')
-plt.ylabel('Amplitude')
-plt.title('supreme betterness - integral')
-plt.legend()
+# Find peaks
+peaks, _ = find_peaks(result, height=2)  # 'height' is a threshold to ignore noise
+
+# Choose the first peak (or any other)
+peak_idx = peaks[0]
+
+# Define a window around the peak — tune this as needed
+pre = 50  # samples before the peak
+post = 500  # samples after the peak
+
+start_idx = max(0, peak_idx - pre)
+end_idx = min(len(result), peak_idx + post)
+
+# Plot zoomed-in segment
+plt.plot(t[start_idx:end_idx], result[start_idx:end_idx])
+plt.title("Zoomed-In Peak")
+plt.xlabel("Time (s)")
+plt.ylabel("Amplitude")
+plt.grid(True)
 plt.show()
+
+
+
+
 
 

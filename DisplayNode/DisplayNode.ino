@@ -14,7 +14,7 @@ Code written by Srivatsan Mukunthraj on 1/30/2024
 // Library for interfacing with CAN
 #include <Arduino_CAN.h>
 
-// Defining the Chip Select, Reset, and Data/Command pin, which just take on Digital Pins
+                                                                      // Defining the Chip Select, Reset, and Data/Command pin, which just take on Digital Pins
 #define TFT_CS     10
 #define TFT_RST    9
 #define TFT_DC     8
@@ -24,14 +24,14 @@ Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC, TFT_RST);     // Adafrui
 void setup() {
   
   // CAN Setup
-  Serial.begin(115200);     //Set the serial baud rate to 115200
+  Serial.begin(115200);                                                           //Set the serial baud rate to 115200
 
-  while (!Serial) { }       // Constantly checks if the Serial is running, basically pausing the program until the connection has been established
+  while (!Serial) { }                                                             // Constantly checks if the Serial is running, basically pausing the program until the connection has been established
 
-  if (!CAN.begin(CanBitRate::BR_500k))            // This initializes CAN and also checks if it fails to initialize and serial prints that, currently set to 500 kbps
+  if (!CAN.begin(CanBitRate::BR_500k))                                            // This initializes CAN and also checks if it fails to initialize and serial prints that, currently set to 500 kbps
   {
-    Serial.println("CAN.begin(...) failed.");     // Prints that CAN initialization has failed in Serial (Might want to consider making it an LED somehow)
-    for (;;) {}                                   // Pauses moving forward in the code until CAN communication has been initialized 
+    Serial.println("CAN.begin(...) failed.");                                     // Prints that CAN initialization has failed in Serial (Might want to consider making it an LED somehow)
+    for (;;) {}                                                                   // Pauses moving forward in the code until CAN communication has been initialized 
   }
 
   Serial.println("Success");
@@ -58,13 +58,13 @@ void loop() {
   if (CAN.available())
   {
     Serial.println("CAN Message available to read");
-    CanMsg const msg = CAN.read();        // Assigning the reading taken from the CAN Bus into the variable msg
+    CanMsg const msg = CAN.read();                                            // Assigning the reading taken from the CAN Bus into the variable msg
     Serial.println(msg);
     
-    int id;                                // Starting a variable id, which will hold the message ID
-    id = msg.getExtendedId();              // Get the message ID from the msg variable
+    int id;                                                                   // Starting a variable id, which will hold the message ID
+    id = msg.getExtendedId();                                                 // Get the message ID from the msg variable
 
-    uint32_t data;                           // data variable to hold the data from message
+    uint32_t data;                                                            // data variable to hold the data from message
     memcpy(&data, (void*)(msg.data + 4), sizeof(data));
 
     if(id == 0x10){
