@@ -88,6 +88,36 @@ plt.ylabel("Amplitude")
 plt.grid(True)
 plt.show()
 
+mat = scipy.io.loadmat('../Oscilloscope_Processing/osc_data.mat')
+#print(mat)
+
+time = mat["time"]
+data = mat["data"]
+sample_rate = 1/mat["sampleInterval"][0]
+print(sample_rate)
+#print(data)
+
+plt.plot(time, data)
+plt.title("Oscilloscope Data")
+plt.xlabel("Time (s)")
+plt.ylabel("Amplitude")
+plt.show()
+
+
+# Trying to plot both signals on one graph
+
+time_offset = time + 0.0387966
+
+plt.plot(t[start_idx:end_idx], result[start_idx:end_idx], label="Probe Data", color='Blue')
+plt.plot(time_offset, data, label="Oscilloscope Data", color='Orange')
+plt.legend(loc='upper right', fontsize=10, frameon=True)
+plt.title("Graph of Both Probe and Oscilloscope Waveform")
+plt.xlabel("Time(s)")
+plt.ylabel("Amplitude")
+plt.grid(True)
+plt.show()
+
+
 
 
 
